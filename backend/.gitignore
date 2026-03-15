@@ -1,0 +1,12 @@
+# Build Target
+target/
+
+# IntelliJ IDEA
+.idea
+*.iml
+
+# MAC
+.DS_Store
+
+# Environment Variables
+.env

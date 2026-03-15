@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: modulog-db
+    environment:
+      POSTGRES_DB: modulog
+      POSTGRES_USER: modulog_user
+      POSTGRES_PASSWORD: modulog_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - modulog_data:/var/lib/postgresql/data
+
+volumes:
+  modulog_data:
