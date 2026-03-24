@@ -1,0 +1,3 @@
+package com.modulog.dto;
+
+public record LoginRequest(String email, String password) {}

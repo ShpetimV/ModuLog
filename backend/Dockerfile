@@ -1,8 +1,14 @@
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
-RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
-COPY . .
-RUN mvn package -DskipTests -q
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+
+# download dependencies first — this layer gets cached
+RUN ./mvnw dependency:go-offline
+
+# then copy source and build
+COPY src ./src
+RUN ./mvnw package -DskipTests -q
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

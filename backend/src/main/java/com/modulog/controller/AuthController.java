@@ -1,5 +1,7 @@
 package com.modulog.controller;
 
+import com.modulog.dto.LoginRequest;
+import com.modulog.dto.RegisterRequest;
 import com.modulog.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +36,4 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-
-    public record RegisterRequest(String email, String password,
-                                  String firstName, String lastName) {}
-    public record LoginRequest(String email, String password) {}
 }

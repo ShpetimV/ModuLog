@@ -15,6 +15,7 @@ public class ActivityModule {
    private long id;
    private String name;
    private String description;
+   @Enumerated(EnumType.STRING)
    private FrequencyType frequency;
    private String icon;
    private String color;
@@ -80,6 +81,10 @@ public class ActivityModule {
 
      public void setColor(String color) {
           this.color = color;
+     }
+
+     public void setUser(User user) {
+       this.user = user;
      }
 
 }
