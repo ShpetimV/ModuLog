@@ -1,7 +1,8 @@
-package com.modulog.module;
+package com.modulog.model.module;
 
-import com.modulog.auth.User;
-import com.modulog.fields.FieldDefinition;
+import com.modulog.model.activity.ActivityLog;
+import com.modulog.model.auth.User;
+import com.modulog.model.fields.FieldDefinition;
 import jakarta.persistence.*;
 
 import java.time.DayOfWeek;
@@ -29,7 +30,7 @@ public class ActivityModule {
    private List<FieldDefinition> fields;
 
    @OneToMany(mappedBy = "module")
-   private List<ActivityModule> logs;
+   private List<ActivityLog> logs;
 
    public ActivityModule() {}
 

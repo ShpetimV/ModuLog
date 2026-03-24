@@ -1,15 +1,19 @@
-package com.modulog.auth;
+package com.modulog.model.auth;
 
-import com.modulog.activity.ActivityLog;
-import com.modulog.module.ActivityModule;
+import com.modulog.model.module.ActivityModule;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.List;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name="users")
-public class User {
+public class User implements UserDetails {
 
     @Id @GeneratedValue
     private Long id;
@@ -50,6 +54,17 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // converts your Role enum into Spring Security's format
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        // e.g. Role.USER → "ROLE_USER"
+    }
+
+    @Override
+    public String getPassword() {
+        return passwordHash; // return your actual field name
+    }
 
     public String getFirstName() {
         return firstName;
@@ -67,8 +82,29 @@ public class User {
         this.lastName = lastName;
     }
 
+    @Override
     public String getUsername() {
-        return username;
+        return email; // Spring uses this as the unique identifier
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // implement properly later if needed
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public void setUsername(String username) {
@@ -81,5 +117,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setPassword(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void setProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setCreatedAt(LocalDateTime now) {
+        this.createdAt = now;
     }
 }

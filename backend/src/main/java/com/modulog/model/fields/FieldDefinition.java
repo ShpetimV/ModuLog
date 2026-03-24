@@ -1,7 +1,7 @@
-package com.modulog.fields;
+package com.modulog.model.fields;
 
 
-import com.modulog.module.ActivityModule;
+import com.modulog.model.module.ActivityModule;
 import jakarta.persistence.*;
 
 @Entity

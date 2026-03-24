@@ -1,6 +1,6 @@
-package com.modulog.fields;
+package com.modulog.model.fields;
 
-import com.modulog.activity.ActivityLog;
+import com.modulog.model.activity.ActivityLog;
 import jakarta.persistence.*;
 
 @Entity

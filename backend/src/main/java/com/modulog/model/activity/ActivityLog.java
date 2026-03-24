@@ -1,7 +1,7 @@
-package com.modulog.activity;
+package com.modulog.model.activity;
 
-import com.modulog.fields.FieldValue;
-import com.modulog.module.ActivityModule;
+import com.modulog.model.fields.FieldValue;
+import com.modulog.model.module.ActivityModule;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
