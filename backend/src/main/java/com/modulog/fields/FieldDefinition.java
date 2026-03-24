@@ -3,7 +3,6 @@ package com.modulog.fields;
 
 import com.modulog.module.ActivityModule;
 import jakarta.persistence.*;
-import com.modulog.*;
 
 @Entity
 public class FieldDefinition {

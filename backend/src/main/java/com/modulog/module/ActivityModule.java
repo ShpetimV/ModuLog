@@ -28,6 +28,9 @@ public class ActivityModule {
    @OneToMany(mappedBy = "module")
    private List<FieldDefinition> fields;
 
+   @OneToMany(mappedBy = "module")
+   private List<ActivityModule> logs;
+
 
 
 }

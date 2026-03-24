@@ -12,7 +12,7 @@ public class ActivityLog {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
     private LocalDateTime loggedAt;
     private String notes;
 
