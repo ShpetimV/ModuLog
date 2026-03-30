@@ -17,7 +17,7 @@ services:
       retries: 5
 
   app:
-    build: .
+    build: ./backend
     container_name: modulog-app
     ports:
       - "8080:8080"
@@ -28,6 +28,16 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: modulog-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://app:8080
+    depends_on:
+      - app
 
 volumes:
   modulog_data:
