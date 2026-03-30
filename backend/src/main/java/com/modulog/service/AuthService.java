@@ -26,7 +26,7 @@ public class AuthService {
 
     public String register(String email, String password,
                            String firstName, String lastName) {
-        // check email not already taken
+
         if (userRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("Email already in use");
         }
