@@ -1,5 +1,6 @@
 package com.modulog.service;
-
+import com.modulog.dto.LoginRequest;
+import com.modulog.dto.RegisterRequest;
 import com.modulog.model.auth.AuthProvider;
 import com.modulog.model.auth.Role;
 import com.modulog.model.auth.User;
@@ -24,18 +25,17 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public String register(String email, String password,
-                           String firstName, String lastName) {
+    public String register(RegisterRequest request) {
 
-        if (userRepository.findByEmail(email).isPresent()) {
+        if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new RuntimeException("Email already in use");
         }
 
         User user = new User();
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password)); // BCrypt hashes here
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
+        user.setEmail(request.email());
+        user.setPassword(passwordEncoder.encode(request.password())); // BCrypt hashes here
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
         user.setProvider(AuthProvider.LOCAL); // not Google/GitHub
         user.setRole(Role.USER);
         user.setCreatedAt(LocalDateTime.now());
@@ -44,12 +44,12 @@ public class AuthService {
         return jwtService.generateToken(user); // return token immediately after register
     }
 
-    public String login(String email, String password) {
-        User user = userRepository.findByEmail(email)
+    public String login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // BCrypt compares the raw password against the stored hash
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
 

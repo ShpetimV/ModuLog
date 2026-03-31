@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input"
 import { registerUser} from "@/lib/api/auth";
 import { useRouter } from "next/navigation"
 import {useState} from "react";
-import Cookies from "js-cookie"
 
 
 export function SignupForm({
@@ -32,12 +31,9 @@ export function SignupForm({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     try {
-      const token = await registerUser({ email,firstName,lastName,password })
-      console.log("Response:",token)
-      Cookies.set("token", token, { expires: 7 }) // Store token in cookie for 7 days
+      await registerUser({ email, firstName, lastName, password })
       router.push("/dashboard")
     } catch (err) {
-      console.log("Error:",err)
       setError("Registration failed")
     }
   }

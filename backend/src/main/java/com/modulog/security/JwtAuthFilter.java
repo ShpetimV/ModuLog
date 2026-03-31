@@ -5,6 +5,7 @@ import com.modulog.repository.UserRepository;
 import com.modulog.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -32,32 +34,38 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 1. grab the Authorization header — looks like "Bearer eyJhbGci..."
-        String authHeader = request.getHeader("Authorization");
+        String token = null;
+        if (request.getCookies() != null) {
+            token = Arrays.stream(request.getCookies())
+                    .filter(c -> c.getName().equals("token"))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(null);
+        }
 
-        // 2. if no token present just move on — SecurityConfig will block if route is protected
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 3. strip the "Bearer " prefix to get the raw token
-        String token = authHeader.substring(7);
+        try {
+            String email = jwtService.extractEmail(token);
 
-        // 4. extract the email from the token
-        String email = jwtService.extractEmail(token);
-
-        // 5. load the user from the DB and validate
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = userRepository.findByEmail(email).orElseThrow();
-            if (jwtService.isTokenValid(token, user)) {
-                // 6. tell Spring Security this request is authenticated
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                User user = userRepository.findByEmail(email).orElseThrow();
+                if (jwtService.isTokenValid(token, user)) {
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (Exception e) {
+            Cookie expired = new Cookie("token", "");
+            expired.setMaxAge(0);
+            expired.setPath("/");
+            response.addCookie(expired);
         }
 
-        filterChain.doFilter(request, response); // pass request along
+        filterChain.doFilter(request, response);
     }
 }
