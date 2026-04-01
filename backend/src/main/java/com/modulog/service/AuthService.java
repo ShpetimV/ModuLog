@@ -1,10 +1,12 @@
 package com.modulog.service;
 import com.modulog.dto.LoginRequest;
 import com.modulog.dto.RegisterRequest;
+import com.modulog.exception.AuthException;
 import com.modulog.model.auth.AuthProvider;
 import com.modulog.model.auth.Role;
 import com.modulog.model.auth.User;
 import com.modulog.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,7 @@ public class AuthService {
     public String register(RegisterRequest request) {
 
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new RuntimeException("Email already in use");
+            throw new AuthException("Email is already in use", HttpStatus.CONFLICT); // 409 CONFLICT
         }
 
         User user = new User();
@@ -45,12 +47,12 @@ public class AuthService {
     }
 
     public String login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // BCrypt compares the raw password against the stored hash
-        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new AuthException("Invalid credentials", HttpStatus.UNAUTHORIZED)); // 401
+
+        if(!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new AuthException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
 
         return jwtService.generateToken(user);
