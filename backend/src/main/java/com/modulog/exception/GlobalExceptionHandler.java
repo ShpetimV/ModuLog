@@ -31,4 +31,11 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", message));
     }
+
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<Map<String, String>> handleLocked(AccountLockedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)  // 429
+                .body(Map.of("error", ex.getMessage()));
+    }
 }
