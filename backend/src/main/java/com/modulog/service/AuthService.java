@@ -6,9 +6,11 @@ import com.modulog.model.auth.AuthProvider;
 import com.modulog.model.auth.Role;
 import com.modulog.model.auth.User;
 import com.modulog.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 

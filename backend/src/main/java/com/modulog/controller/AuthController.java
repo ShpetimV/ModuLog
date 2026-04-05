@@ -5,6 +5,7 @@ import com.modulog.dto.RegisterRequest;
 import com.modulog.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequest request,
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request,
                                          HttpServletResponse response) {
         String token = authService.register(request);
         addTokenCookie(response, token);
@@ -27,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request,
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest request,
                                       HttpServletResponse response) {
         String token = authService.login(request);
         addTokenCookie(response, token);
